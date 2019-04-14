@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<jnlp codebase="http://www.kreativekorp.com/software/bridget/" href="Bridget.jnlp"> 
+  <information> 
+    <title>Bridget</title> 
+    <vendor>Kreative Software</vendor> 
+    <description>Bridget</description> 
+    <description kind="short">A deceptively simple strategy game.</description>
+    <icon href="Bridget.gif" width="128" height="128"/> 
+    <homepage href="http://www.kreativekorp.com/software/bridget/"/> 
+    <offline-allowed/> 
+  </information> 
+  <resources> 
+    <j2se version="1.5+"/> 
+    <jar href="Bridget.jar"/> 
+  </resources> 
+  <application-desc main-class="com.kreative.bridget.gui.BridgetJWS"/> 
+</jnlp>
