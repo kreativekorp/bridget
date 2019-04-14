@@ -306,27 +306,30 @@ public class BridgetGUI extends JFrame implements ActionListener {
 	
 	public void read(File f) throws IOException {
 		ObjectInputStream ois = new ObjectInputStream(new FileInputStream(f));
-		if (ois.readLong() != 0x4252494447455420L) throw new IOException("No magic");
-		if (ois.readInt() != 0x00030000) throw new IOException("Wrong version");
-		int tp = ois.readByte(); if (tp < 1 || tp > 2) throw new IOException("Invalid player count");
-		int sz = ois.readByte(); if (sz < BridgetBoard.SIZE_MIN) throw new IOException("Invalid board size");
-		int os = ois.readByte(); if (os < 0 || os > 1) throw new IOException("Invalid oStarts flag");
-		if (ois.readByte() != -1) throw new IOException("Invalid reserved field");
-		BridgetGUIPanel bp = BridgetGUIPanel.read(ois);
-		if (ois.readLong() != 0x2054454744495242L) throw new IOException("No magic");
-		ois.close();
-		twoPlayer = (tp > 1);
-		size = sz;
-		oStarts = (os > 0);
-		mi1P.setSelected(!twoPlayer);
-		mi2P.setSelected(twoPlayer);
-		miSm.setSelected(size == BridgetBoard.SIZE_SMALL);
-		miMe.setSelected(size == BridgetBoard.SIZE_MEDIUM);
-		miLa.setSelected(size == BridgetBoard.SIZE_LARGE);
-		miHu.setSelected(size == BridgetBoard.SIZE_HUGE);
-		miGi.setSelected(size == BridgetBoard.SIZE_GIGANTIC);
-		setContentPane(bp);
-		pack();
+		try {
+			if (ois.readLong() != 0x4252494447455420L) throw new IOException("No magic");
+			if (ois.readInt() != 0x00030000) throw new IOException("Wrong version");
+			int tp = ois.readByte(); if (tp < 1 || tp > 2) throw new IOException("Invalid player count");
+			int sz = ois.readByte(); if (sz < BridgetBoard.SIZE_MIN) throw new IOException("Invalid board size");
+			int os = ois.readByte(); if (os < 0 || os > 1) throw new IOException("Invalid oStarts flag");
+			if (ois.readByte() != -1) throw new IOException("Invalid reserved field");
+			BridgetGUIPanel bp = BridgetGUIPanel.read(ois);
+			if (ois.readLong() != 0x2054454744495242L) throw new IOException("No magic");
+			twoPlayer = (tp > 1);
+			size = sz;
+			oStarts = (os > 0);
+			mi1P.setSelected(!twoPlayer);
+			mi2P.setSelected(twoPlayer);
+			miSm.setSelected(size == BridgetBoard.SIZE_SMALL);
+			miMe.setSelected(size == BridgetBoard.SIZE_MEDIUM);
+			miLa.setSelected(size == BridgetBoard.SIZE_LARGE);
+			miHu.setSelected(size == BridgetBoard.SIZE_HUGE);
+			miGi.setSelected(size == BridgetBoard.SIZE_GIGANTIC);
+			setContentPane(bp);
+			pack();
+		} finally {
+			ois.close();
+		}
 	}
 	
 	public File getSaveFile() {
