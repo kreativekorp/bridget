@@ -1,0 +1,32 @@
+CACHE MANIFEST
+# 2020-05-10 16:34
+
+CACHE:
+bkgnd.png
+bridget.css
+bridget.js
+Chalkduster.ttf
+h.svg
+icon.ico
+icon16.png
+icon24.png
+icon32.png
+icon48.png
+icon57.png
+icon64.png
+icon114.png
+icon128.png
+icon256.png
+index.html
+iosstartup.png
+jquery.js
+manifest.json
+o.svg
+v.svg
+water.gif
+x.svg
+
+NETWORK:
+*
+
+# END

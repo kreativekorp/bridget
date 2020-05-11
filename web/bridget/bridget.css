@@ -1,0 +1,184 @@
+* {
+	margin: 0;
+	padding: 0;
+}
+html, body {
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+}
+body {
+	background: url(bkgnd.png);
+	font-family: sans-serif;
+	font-size: 16px;
+}
+.hidden {
+	display: none !important;
+}
+
+.toolbar {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 50px;
+	line-height: 50px;
+	background: #995500;
+	color: white;
+	text-align: center;
+	overflow: hidden;
+	-webkit-box-shadow: 0px 1px 2px 1px rgba(0,0,0,0.5);
+	-moz-box-shadow: 0px 1px 2px 1px rgba(0,0,0,0.5);
+	box-shadow: 0px 1px 2px 1px rgba(0,0,0,0.5);
+}
+.toolbar .toolbar-section {
+	display: inline;
+	margin-left: 10px;
+}
+.toolbar .toolbar-section:first-child {
+	margin-left: 0;
+}
+.toolbar button {
+	margin: 0;
+	border: none;
+	padding: 0;
+	width: 50px;
+	height: 50px;
+	background: #995500;
+	color: #ffffff;
+	outline: none;
+	font-size: 24px;
+	text-shadow: 0 2px 2px black;
+	vertical-align: top;
+}
+.toolbar button.active {
+	background: #773300;
+	color: #dddddd;
+	outline: none;
+}
+.toolbar button:active {
+	background: #551100;
+	color: #bbbbbb;
+	outline: none;
+}
+.toolbar button.active:active {
+	background: #330000;
+	color: #999999;
+	outline: none;
+}
+
+.status {
+	position: fixed;
+	top: 75px;
+	left: 0;
+	right: 0;
+	height: 50px;
+	line-height: 50px;
+	font-family: Chalkduster;
+	font-size: 32px;
+	font-weight: bold;
+	text-transform: uppercase;
+	text-align: center;
+}
+.xstatus {
+	color: #cc0000;
+}
+.ostatus {
+	color: #009900;
+}
+
+.board-outer-container {
+	position: fixed;
+	top: 150px;
+	left: 50px;
+	right: 50px;
+	bottom: 50px;
+}
+.board-inner-container {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+}
+.board {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	background: url(water.gif);
+	background-size: 100% 100%;
+}
+.x, .o, .xhov, .xvoh {
+	position: absolute;
+}
+.x {
+	background: url(x.svg);
+	background-size: 100% 100%;
+}
+.o {
+	background: url(o.svg);
+	background-size: 100% 100%;
+}
+.h {
+	background: url(h.svg);
+	background-size: 100% 100%;
+}
+.v {
+	background: url(v.svg);
+	background-size: 100% 100%;
+}
+
+.smokescreen {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: rgba(0, 0, 0, 0.6);
+}
+.dialog {
+	position: fixed;
+	box-sizing: border-box;
+	top: 50%;
+	left: 50%;
+	width: 428px;
+	height: 208px;
+	margin-left: -214px;
+	margin-top: -104px;
+	border-radius: 9px;
+	background: #ffffff;
+	padding: 20px;
+	overflow: hidden;
+	-webkit-box-shadow: 0px 3px 6px 3px rgba(0,0,0,0.5);
+	-moz-box-shadow: 0px 3px 6px 3px rgba(0,0,0,0.5);
+	box-shadow: 0px 3px 6px 3px rgba(0,0,0,0.5);
+}
+.dialog-buttons {
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 20px;
+	text-align: center;
+}
+.dialog-buttons button {
+	margin: 0 8px;
+	border: none;
+	border-radius: 4px;
+	padding: 12px 24px;
+	background: #ffffff;
+	color: #000000;
+	outline: none;
+	font-size: 14px;
+	font-weight: bold;
+	-webkit-box-shadow: 0px 1px 2px 1px rgba(0,0,0,0.5);
+	-moz-box-shadow: 0px 1px 2px 1px rgba(0,0,0,0.5);
+	box-shadow: 0px 1px 2px 1px rgba(0,0,0,0.5);
+}
+.dialog-buttons button:active {
+	background: #cccccc;
+	color: #000000;
+	outline: none;
+}
+
+@font-face {
+	font-family: "Chalkduster";
+	src: local("Chalkduster"), url(Chalkduster.ttf) format("truetype");
+}

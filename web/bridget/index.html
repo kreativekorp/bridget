@@ -1,0 +1,64 @@
+<html manifest="bridget-v30.appcache">
+<head>
+<title>Bridget</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<link rel="shortcut icon" href="icon.ico">
+<link rel="apple-touch-icon" sizes="57x57" href="icon57.png">
+<link rel="apple-touch-icon" sizes="114x114" href="icon114.png">
+<link rel="apple-touch-startup-image" href="iosstartup.png">
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="bridget.css">
+</head>
+<body>
+
+<div class="toolbar"><!--
+	--><div class="toolbar-section"><!--
+		--><button class="start-game" title="New Game">&#9788;</button><!--
+	--></div><!--
+	--><div class="toolbar-section"><!--
+		--><button class="start-game" data-players="1" title="Single-Player">1P</button><!--
+		--><button class="start-game" data-players="2" title="Two-Player">2P</button><!--
+	--></div><!--
+	--><div class="toolbar-section"><!--
+		--><button class="start-game" data-boardsize="2" title="Small Size">S</button><!--
+		--><button class="start-game" data-boardsize="4" title="Medium Size">M</button><!--
+		--><button class="start-game" data-boardsize="6" title="Large Size">L</button><!--
+		--><button class="start-game" data-boardsize="8" title="Huge Size">1X</button><!--
+		--><button class="start-game" data-boardsize="10" title="Gigantic Size">2X</button><!--
+	--></div><!--
+	--><div class="toolbar-section"><!--
+		--><button class="show-help" title="How to Play">?</button><!--
+	--></div><!--
+--></div>
+
+<h1 class="status">Bridget</h1>
+
+<div class="board-outer-container">
+	<div class="board-inner-container">
+		<div class="board"></div>
+	</div>
+</div>
+
+<div class="smokescreen hidden"></div>
+
+<div class="dialog hidden">
+	<p>
+		In this game, one player attempts to form a connected
+		bridge from the top to the bottom of the board by
+		connecting horizontally or vertically adjacent green
+		circles. The other player attempts to form a bridge
+		from the left to the right by connecting red squares.
+		The first player to form a bridge wins.
+	</p>
+	<div class="dialog-buttons">
+		<button class="hide-help">OK</button>
+	</div>
+</div>
+
+<script src="jquery.js" charset="utf-8"></script>
+<script src="bridget.js" charset="utf-8"></script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+{
+	"name": "Bridget",
+	"description": "In this game, one player attempts to form a bridge from the top to the bottom of the board, and the other player attempts to form a bridge from the left to the right.",
+	"version": "3.0",
+	"manifest_version": 2,
+	"icons": {
+		"16": "icon16.png",
+		"24": "icon24.png",
+		"32": "icon32.png",
+		"48": "icon48.png",
+		"64": "icon64.png",
+		"128": "icon128.png",
+		"256": "icon256.png"
+	},
+	"app": {
+		"launch": {
+			"local_path": "index.html"
+		}
+	}
+}
