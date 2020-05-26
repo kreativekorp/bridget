@@ -97,12 +97,12 @@ var getWeightedAdjacentNodes = function(node) {
 	var xy = node.split('-');
 	if (xy.length === 2) {
 		var n = boardSize * 2 + 3;
-		if ((xy[0]-2)   >= 0 && !boardGraph[(xy[0]-1)    + '-' + xy[1]]) weights[(xy[0]-2)    + '-' + xy[1]] = 1;
-		if ((xy[0]-(-2)) < n && !boardGraph[(xy[0]-(-1)) + '-' + xy[1]]) weights[(xy[0]-(-2)) + '-' + xy[1]] = 1;
-		if ((xy[1]-2)   >= 0 && !boardGraph[xy[0] + '-' + (xy[1]-1)   ]) weights[xy[0] + '-' + (xy[1]-2)   ] = 1;
-		if ((xy[1]-(-2)) < n && !boardGraph[xy[0] + '-' + (xy[1]-(-1))]) weights[xy[0] + '-' + (xy[1]-(-2))] = 1;
+		if ((xy[0]-2)   >= 0 && !boardGraph[(xy[0]-1)    + '-' + xy[1]]) weights[(xy[0]-2)    + '-' + xy[1]] = 65536;
+		if ((xy[0]-(-2)) < n && !boardGraph[(xy[0]-(-1)) + '-' + xy[1]]) weights[(xy[0]-(-2)) + '-' + xy[1]] = 65536;
+		if ((xy[1]-2)   >= 0 && !boardGraph[xy[0] + '-' + (xy[1]-1)   ]) weights[xy[0] + '-' + (xy[1]-2)   ] = 65536;
+		if ((xy[1]-(-2)) < n && !boardGraph[xy[0] + '-' + (xy[1]-(-1))]) weights[xy[0] + '-' + (xy[1]-(-2))] = 65536;
 	}
-	$.each(boardGraph[node], function(k,v) { if (v) weights[k] = 0; });
+	$.each(boardGraph[node], function(k,v) { if (v) weights[k] = 1; });
 	return shuffle($.map(weights, function(v,k) { return [[k,v]]; }));
 };
 
