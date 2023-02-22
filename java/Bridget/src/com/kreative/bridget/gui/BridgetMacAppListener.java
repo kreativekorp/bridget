@@ -1,32 +1,47 @@
 package com.kreative.bridget.gui;
 
+import java.awt.desktop.AboutEvent;
+import java.awt.desktop.AboutHandler;
+import java.awt.desktop.OpenFilesEvent;
+import java.awt.desktop.OpenFilesHandler;
+import java.awt.desktop.PrintFilesEvent;
+import java.awt.desktop.PrintFilesHandler;
+import java.awt.desktop.QuitEvent;
+import java.awt.desktop.QuitHandler;
+import java.awt.desktop.QuitResponse;
 import java.io.File;
+import java.lang.reflect.Method;
 import javax.swing.JOptionPane;
 
-@SuppressWarnings("deprecation")
-public class BridgetMacAppListener implements com.apple.eawt.ApplicationListener {
-	private BridgetGUI g;
+public class BridgetMacAppListener {
+	private static final String[][] classAndMethodNames = {
+		{ "java.awt.Desktop", "getDesktop" },
+		{ "com.kreative.ual.eawt.NewApplicationAdapter", "getInstance" },
+		{ "com.kreative.ual.eawt.OldApplicationAdapter", "getInstance" },
+	};
 	
-	public BridgetMacAppListener(BridgetGUI g) {
+	private final BridgetGUI g;
+	
+	public BridgetMacAppListener(final BridgetGUI g) {
 		this.g = g;
-		com.apple.eawt.Application a = com.apple.eawt.Application.getApplication();
-		a.addAboutMenuItem();
-		a.setEnabledAboutMenu(true);
-		a.removePreferencesMenuItem();
-		a.addApplicationListener(this);
-	}
-
-	public void handleAbout(com.apple.eawt.ApplicationEvent arg0) {
-		new BridgetAbout();
-		arg0.setHandled(true);
-	}
-
-	public void handleOpenApplication(com.apple.eawt.ApplicationEvent arg0) {
-		// nothing
+		for (String[] classAndMethodName : classAndMethodNames) {
+			try {
+				Class<?> cls = Class.forName(classAndMethodName[0]);
+				Method getInstance = cls.getMethod(classAndMethodName[1]);
+				Object instance = getInstance.invoke(null);
+				cls.getMethod("setAboutHandler", AboutHandler.class).invoke(instance, about);
+				cls.getMethod("setOpenFileHandler", OpenFilesHandler.class).invoke(instance, open);
+				cls.getMethod("setPrintFileHandler", PrintFilesHandler.class).invoke(instance, print);
+				cls.getMethod("setQuitHandler", QuitHandler.class).invoke(instance, quit);
+				System.out.println("Registered app event handlers through " + classAndMethodName[0]);
+				return;
+			} catch (Exception e) {
+				System.out.println("Failed to register app event handlers through " + classAndMethodName[0] + ": " + e);
+			}
+		}
 	}
 	
-	public void handleOpenFile(com.apple.eawt.ApplicationEvent arg0) {
-		File f = new File(arg0.getFilename());
+	private void readFile(final File f) {
 		try {
 			g.read(f);
 		} catch (Exception e) {
@@ -34,24 +49,56 @@ public class BridgetMacAppListener implements com.apple.eawt.ApplicationListener
 			JOptionPane.showMessageDialog(g, "That file was not recognized as a saved game file.");
 			g.reset();
 		}
-		arg0.setHandled(true);
 	}
-
-	public void handlePreferences(com.apple.eawt.ApplicationEvent arg0) {
-		// nothing
-	}
-
-	public void handlePrintFile(com.apple.eawt.ApplicationEvent arg0) {
-		handleOpenFile(arg0); // no printing though
-		arg0.setHandled(true);
-	}
-
-	public void handleQuit(com.apple.eawt.ApplicationEvent arg0) {
-		try { g.write(g.getSaveFile()); } catch (Exception e) { e.printStackTrace(); }
-		System.exit(0);
-	}
-
-	public void handleReOpenApplication(com.apple.eawt.ApplicationEvent arg0) {
-		// nothing
-	}
+	
+	private final AboutHandler about = new AboutHandler() {
+		@Override
+		public void handleAbout(final AboutEvent e) {
+			new Thread() {
+				public void run() {
+					new BridgetAbout();
+				}
+			}.start();
+		}
+	};
+	
+	private final OpenFilesHandler open = new OpenFilesHandler() {
+		@Override
+		public void openFiles(final OpenFilesEvent e) {
+			new Thread() {
+				public void run() {
+					for (Object o : e.getFiles()) {
+						readFile((File)o);
+					}
+				}
+			}.start();
+		}
+	};
+	
+	private final PrintFilesHandler print = new PrintFilesHandler() {
+		@Override
+		public void printFiles(final PrintFilesEvent e) {
+			new Thread() {
+				public void run() {
+					for (Object o : e.getFiles()) {
+						readFile((File)o);
+					}
+				}
+			}.start();
+		}
+	};
+	
+	private final QuitHandler quit = new QuitHandler() {
+		@Override
+		public void handleQuitRequestWith(final QuitEvent e, final QuitResponse r) {
+			new Thread() {
+				public void run() {
+					try { g.write(g.getSaveFile()); }
+					catch (Exception e) { e.printStackTrace(); }
+					r.performQuit();
+					System.exit(0);
+				}
+			}.start();
+		}
+	};
 }

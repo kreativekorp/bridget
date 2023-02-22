@@ -3,18 +3,36 @@ package com.kreative.bridget.gui;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.Random;
 import javax.swing.*;
-
 import com.kreative.bridget.*;
 
 public class BridgetGUI extends JFrame implements ActionListener {
 	private static final long serialVersionUID = 1L;
 	
 	public static void main(String[] args) {
+		try { System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Bridget"); } catch (Exception e) {}
+		try { System.setProperty("apple.laf.useScreenMenuBar", "true"); } catch (Exception e) {}
+		try { UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); } catch (Exception e) {}
+		
 		try {
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			Method getModule = Class.class.getMethod("getModule");
+			Object javaDesktop = getModule.invoke(Toolkit.getDefaultToolkit().getClass());
+			Object allUnnamed = getModule.invoke(BridgetGUI.class);
+			Class<?> module = Class.forName("java.lang.Module");
+			Method addOpens = module.getMethod("addOpens", String.class, module);
+			addOpens.invoke(javaDesktop, "sun.awt.X11", allUnnamed);
 		} catch (Exception e) {}
+		
+		try {
+			Toolkit tk = Toolkit.getDefaultToolkit();
+			Field aacn = tk.getClass().getDeclaredField("awtAppClassName");
+			aacn.setAccessible(true);
+			aacn.set(tk, "Bridget");
+		} catch (Exception e) {}
+		
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				new BridgetGUI();
@@ -46,19 +64,14 @@ public class BridgetGUI extends JFrame implements ActionListener {
 	private JMenuItem miHelp;
 	private JMenuItem miAbout;
 	
+	private String lastOpenDirectory = null;
+	private String lastSaveDirectory = null;
+	
 	public BridgetGUI() {
-		super("Bridget II");
+		super("Bridget");
 		boolean mac = false;
-		try {
-			mac = System.getProperty("os.name").toUpperCase().contains("MAC OS");
-			if (mac) try {
-				System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Bridget II");
-				System.setProperty("apple.laf.useScreenMenuBar", "true");
-				System.setProperty("apple.awt.use-file-dialog-packages", "true");
-			} catch (Exception ee) {}
-		} catch (Exception e) {
-			mac = false;
-		}
+		try { mac = System.getProperty("os.name").toUpperCase().contains("MAC OS"); }
+		catch (Exception e) { mac = false; }
 
 		mbar = new JMenuBar();
 		mbar.add(fmenu = new JMenu("File")); if (!mac) fmenu.setMnemonic(KeyEvent.VK_F);
@@ -79,7 +92,7 @@ public class BridgetGUI extends JFrame implements ActionListener {
 		menu.add(miGTW = new JCheckBoxMenuItem("Global Thermonuclear War")); miGTW.setMnemonic(KeyEvent.VK_W); miGTW.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, this.getToolkit().getMenuShortcutKeyMask() | InputEvent.SHIFT_MASK));
 		mbar.add(hmenu = new JMenu("Help")); if (!mac) hmenu.setMnemonic(KeyEvent.VK_H);
 		hmenu.add(miHelp = new JMenuItem("How to Play")); miHelp.setMnemonic(KeyEvent.VK_H); miHelp.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_SLASH, this.getToolkit().getMenuShortcutKeyMask()));
-		if (!mac) { hmenu.add(miAbout = new JMenuItem("About Bridget II")); miAbout.setMnemonic(KeyEvent.VK_A); }
+		if (!mac) { hmenu.add(miAbout = new JMenuItem("About Bridget")); miAbout.setMnemonic(KeyEvent.VK_A); }
 		
 		miNew.addActionListener(this);
 		miOpen.addActionListener(this);
@@ -174,42 +187,50 @@ public class BridgetGUI extends JFrame implements ActionListener {
 			reset();
 		}
 		else if (src == miOpen) {
-			FileDialog fd = new FileDialog(new Frame(), "Open Saved Game", FileDialog.LOAD);
+			Frame frame = new Frame();
+			FileDialog fd = new FileDialog(frame, "Open Saved Game", FileDialog.LOAD);
+			if (lastOpenDirectory != null) fd.setDirectory(lastOpenDirectory);
 			fd.setFilenameFilter(new FilenameFilter() {
 				public boolean accept(File dir, String name) {
 					return name.endsWith(".bri") || new File(dir, name).isDirectory();
 				}
 			});
 			fd.setVisible(true);
-			if (fd.getFile() != null) {
-				File f = new File(fd.getDirectory()+System.getProperty("file.separator")+fd.getFile());
-				try {
-					read(f);
-				} catch (Exception e) {
-					e.printStackTrace();
-					JOptionPane.showMessageDialog(this, "That file was not recognized as a saved game file.");
-					reset();
-				}
+			String ds = fd.getDirectory(), fs = fd.getFile();
+			fd.dispose();
+			frame.dispose();
+			if (ds == null || fs == null) return;
+			File file = new File((lastOpenDirectory = ds), fs);
+			try {
+				read(file);
+			} catch (Exception e) {
+				e.printStackTrace();
+				JOptionPane.showMessageDialog(this, "That file was not recognized as a saved game file.");
+				reset();
 			}
 		}
 		else if (src == miSave) {
-			FileDialog fd = new FileDialog(new Frame(), "Save Game As", FileDialog.SAVE);
+			Frame frame = new Frame();
+			FileDialog fd = new FileDialog(frame, "Save Game As", FileDialog.SAVE);
+			if (lastSaveDirectory != null) fd.setDirectory(lastSaveDirectory);
 			fd.setFilenameFilter(new FilenameFilter() {
 				public boolean accept(File dir, String name) {
 					return name.endsWith(".bri") || new File(dir, name).isDirectory();
 				}
 			});
 			fd.setVisible(true);
-			if (fd.getFile() != null) {
-				String f = fd.getDirectory()+System.getProperty("file.separator")+fd.getFile();
-				if (!f.endsWith(".bri")) f += ".bri";
-				try {
-					write(new File(f));
-				} catch (Exception e) {
-					e.printStackTrace();
-					JOptionPane.showMessageDialog(this, "Could not save to that file.");
-					reset();
-				}
+			String ds = fd.getDirectory(), fs = fd.getFile();
+			fd.dispose();
+			frame.dispose();
+			if (ds == null || fs == null) return;
+			if (!fs.toLowerCase().endsWith(".bri")) fs += ".bri";
+			File file = new File((lastSaveDirectory = ds), fs);
+			try {
+				write(file);
+			} catch (Exception e) {
+				e.printStackTrace();
+				JOptionPane.showMessageDialog(this, "Could not save to that file.");
+				reset();
 			}
 		}
 		else if (src == miExit) {

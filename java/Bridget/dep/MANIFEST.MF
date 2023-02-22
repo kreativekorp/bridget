@@ -1,3 +1,4 @@
 Manifest-Version: 1.0
-Created-By: 3.0.1 (Kreative Software)
+Created-By: 3.0.2 (Kreative Software)
 Main-Class: com.kreative.bridget.gui.BridgetGUI
+Class-Path: ual.jar dep/ual.jar
